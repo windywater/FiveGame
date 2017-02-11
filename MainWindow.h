@@ -21,9 +21,11 @@ public:
 	void showInfo(const QString& text);
     
 protected slots:
-    void onHost();
+    //void onHost();
     void onRegret();
-	void onReceiveHost(QHostAddress addr);
+	void onConnectClicked();
+
+	//void onReceiveHost(QHostAddress addr);
 	void onOtherConnected();
 	void onJoinGame(Qizi qizi, bool firstDrop);
 	void onDropMine(Step step);

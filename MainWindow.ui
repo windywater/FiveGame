@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>493</height>
+    <width>732</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>FiveGame</string>
   </property>
   <widget class="Panel" name="m_gamePanel" native="true">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>20</y>
+     <x>10</x>
+     <y>10</y>
      <width>450</width>
      <height>450</height>
     </rect>
@@ -41,24 +41,11 @@
     </size>
    </property>
   </widget>
-  <widget class="QPushButton" name="m_hostButton">
-   <property name="geometry">
-    <rect>
-     <x>480</x>
-     <y>50</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Host</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="m_regretButton">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>90</y>
+     <x>470</x>
+     <y>120</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -70,15 +57,81 @@
   <widget class="QLabel" name="m_info">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>150</y>
-     <width>141</width>
+     <x>20</x>
+     <y>480</y>
+     <width>371</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>tip</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>10</y>
+     <width>241</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>As server</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Local address:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QComboBox" name="m_localAddrCombo"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>60</y>
+     <width>241</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>As client</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QLineEdit" name="m_serverAddr">
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="m_connectButton">
+      <property name="text">
+       <string>Connect</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

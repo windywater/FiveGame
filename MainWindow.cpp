@@ -9,11 +9,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 	ui->m_gamePanel->create(QRect(19, 19, 412, 412), 15, 15);
 
-    connect(ui->m_hostButton, SIGNAL(clicked()), this, SLOT(onHost()));
+    //connect(ui->m_hostButton, SIGNAL(clicked()), this, SLOT(onHost()));
     connect(ui->m_regretButton, SIGNAL(clicked()), this, SLOT(onRegret()));
+	connect(ui->m_connectButton, SIGNAL(clicked()), this, SLOT(onConnectClicked()));
     
     m_network = new Network(this);
-	connect(m_network, SIGNAL(receiveHost(QHostAddress)), this, SLOT(onReceiveHost(QHostAddress)));
+	//connect(m_network, SIGNAL(receiveHost(QHostAddress)), this, SLOT(onReceiveHost(QHostAddress)));
 	connect(m_network, SIGNAL(otherConnected()), this, SLOT(onOtherConnected()));
 	connect(m_network, SIGNAL(joinGame(Qizi, bool)), this, SLOT(onJoinGame(Qizi, bool)));
 	connect(ui->m_gamePanel, SIGNAL(dropMine(Step)), this, SLOT(onDropMine(Step)));
@@ -21,6 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_network, SIGNAL(otherDrops(Step)), this, SLOT(onQiziDropped(Step)));
 	connect(m_network, SIGNAL(otherAsksRegret()), this, SLOT(onOtherAsksRegret()));
 	connect(m_network, SIGNAL(otherRespondsRegret(bool)), this, SLOT(onOtherRespondsRegret(bool)));
+
+	QList<QHostAddress> localAddresses = m_network->localAddresses();
+	foreach(const QHostAddress& addr, localAddresses)
+	{
+		ui->m_localAddrCombo->addItem(addr.toString());
+	}
 
 	reset();
 }
@@ -39,11 +46,11 @@ void MainWindow::reset()
 	showInfo(tr("Game ready."));
 }
 
-void MainWindow::onHost()
-{
-    m_network->broadcastToHost();
-	showInfo(tr("Host message has been sent."));
-}
+//void MainWindow::onHost()
+//{
+//    m_network->broadcastToHost();
+//	showInfo(tr("Host message has been sent."));
+//}
 
 void MainWindow::onRegret()
 {
@@ -56,12 +63,17 @@ void MainWindow::onRegret()
 	showInfo(tr("Ask to regret..."));
 }
 
-void MainWindow::onReceiveHost(QHostAddress addr)
+void MainWindow::onConnectClicked()
 {
-	QString text = tr("Received host from %1, join it?").arg(addr.toString());
-	if (QMessageBox::question(this, tr("Query"), text, QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
-		m_network->join(addr);
+	m_network->join(ui->m_serverAddr->text());
 }
+
+//void MainWindow::onReceiveHost(QHostAddress addr)
+//{
+//	QString text = tr("Received host from %1, join it?").arg(addr.toString());
+//	if (QMessageBox::question(this, tr("Query"), text, QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
+//		m_network->join(addr);
+//}
 
 void MainWindow::onOtherConnected()
 {

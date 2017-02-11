@@ -17,16 +17,16 @@ void Network::init()
 {
 	m_isHost = false;
 	m_tcpPort = 50010;
-	m_udpPort = 50050;
 
-	QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
-	for (int i = 0; i < addresses.size(); i++)
+	foreach(const QNetworkInterface& interface, QNetworkInterface::allInterfaces())
 	{
-		QHostAddress addr = addresses.at(i);
-		if (addr.toString().startsWith("192.168.18."))
+		if (interface.flags() & (QNetworkInterface::IsUp | QNetworkInterface::IsRunning) && interface.isValid())
 		{
-			m_myAddress = addr;
-			break;
+			foreach(const QNetworkAddressEntry& entry, interface.addressEntries())
+			{
+				QString ip = entry.ip().toString();
+				m_myAddresses << entry.ip();
+			}
 		}
 	}
 
@@ -37,10 +37,11 @@ void Network::init()
     m_mySocket = new QTcpSocket(this);
     connect(m_mySocket, SIGNAL(readyRead()), this, SLOT(onTcpRead()));
     
+	/*
     m_udpSocket = new QUdpSocket(this);
 	m_udpSocket->bind(QHostAddress::Any, m_udpPort, QUdpSocket::ShareAddress);
     connect(m_udpSocket, SIGNAL(readyRead()), this, SLOT(onUdpRead()));
-
+	*/
 	m_clientSocket = NULL;
 }
 
@@ -88,7 +89,7 @@ void Network::onTcpRead()
 		emit otherRespondsRegret(false);
 	}
 }
-
+/*
 void Network::onUdpRead()
 {
 	if (m_udpSocket->hasPendingDatagrams())
@@ -99,7 +100,7 @@ void Network::onUdpRead()
 		quint16 senderPort;
 		m_udpSocket->readDatagram(data.data(), data.size(), &senderAddr, &senderPort);
 
-		if (senderAddr == m_myAddress)
+		if (m_myAddresses.contains(senderAddr))
 			return;
 
 		QDataStream ds(data);
@@ -109,26 +110,34 @@ void Network::onUdpRead()
 			emit receiveHost(senderAddr);
 	}
 }
-
+*/
+/*
 void Network::broadcastToHost()
 {
 	QByteArray data;
 	QDataStream ds(&data, QIODevice::WriteOnly);
 	ds << QByteArray("host");
 
-	QStringList ipSection = m_myAddress.toString().split(".");
-	QHostAddress broadcastAddr = QHostAddress(
-		QString("%1.%2.%3.255")
-		.arg(ipSection.at(0))
-		.arg(ipSection.at(1))
-		.arg(ipSection.at(2)) );
-
-	m_udpSocket->writeDatagram(data, broadcastAddr, m_udpPort);
+	foreach(const QHostAddress& addr, m_broadcasts)
+	{
+		if (!addr.isNull())
+		{
+			qDebug() << addr.toString();
+			m_udpSocket->writeDatagram(data, addr, m_udpPort);
+		}
+	}
 }
-
+*/
+/*
 void Network::join(QHostAddress addr)
 {
 	m_mySocket->connectToHost(addr, m_tcpPort);
+	m_mySocket->waitForConnected(1000);
+}*/
+
+void Network::join(const QString& ip)
+{
+	m_mySocket->connectToHost(QHostAddress(ip), m_tcpPort);
 	m_mySocket->waitForConnected(1000);
 }
 
@@ -190,6 +199,9 @@ void Network::close()
 		m_clientSocket->deleteLater();
 		m_clientSocket = NULL;
 	}
-	
-	
+}
+
+QList<QHostAddress> Network::localAddresses()
+{
+	return m_myAddresses;
 }
